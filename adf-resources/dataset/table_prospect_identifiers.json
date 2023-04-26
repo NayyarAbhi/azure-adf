@@ -1,0 +1,47 @@
+{
+	"name": "table_prospect_identifiers",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlDatabase1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "prospect_identifier_id",
+				"type": "varchar"
+			},
+			{
+				"name": "prospect_id",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "identifier",
+				"type": "varchar"
+			},
+			{
+				"name": "identifier_type",
+				"type": "varchar"
+			},
+			{
+				"name": "active_from",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "active_to",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			}
+		],
+		"typeProperties": {
+			"schema": "prospect",
+			"table": "tbl_prospect_identifiers"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

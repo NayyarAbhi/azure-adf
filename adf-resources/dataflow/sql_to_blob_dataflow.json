@@ -1,0 +1,74 @@
+{
+	"name": "sql_to_blob_dataflow",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "table_prospect",
+						"type": "DatasetReference"
+					},
+					"name": "prospect"
+				},
+				{
+					"dataset": {
+						"referenceName": "table_prospect_identifiers",
+						"type": "DatasetReference"
+					},
+					"name": "prospectIdentifier"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "feed_prospect_prospectidentifier",
+						"type": "DatasetReference"
+					},
+					"name": "blobStorage"
+				}
+			],
+			"transformations": [
+				{
+					"name": "join1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          prospect_id as integer,",
+				"          created_on as timestamp,",
+				"          brand_identifier as string,",
+				"          channel_identifier as string,",
+				"          first_name as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> prospect",
+				"source(output(",
+				"          prospect_identifier_id as string,",
+				"          prospect_id as integer,",
+				"          identifier as string,",
+				"          identifier_type as string,",
+				"          active_from as timestamp,",
+				"          active_to as timestamp",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     inferDriftedColumnTypes: true,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     query: 'SELECT \\nprospect_id,\\nprospect_identifier_id as identifier_1_id,\\nidentifier_type as identifier_1_type,\\nidentifier as identifier_1_value,\\nactive_from as identifier_1_active_from,\\nactive_to as identifier_1_active_to\\nFROM [prospect].[tbl_prospect_identifiers]',",
+				"     format: 'query') ~> prospectIdentifier",
+				"prospect, prospectIdentifier join(prospect@prospect_id == prospectIdentifier@prospect_id,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join1",
+				"join1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> blobStorage"
+			]
+		}
+	}
+}
