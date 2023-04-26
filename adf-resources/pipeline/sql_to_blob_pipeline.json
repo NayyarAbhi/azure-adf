@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "ProspectTable",
+				"name": "sql_to_blob",
 				"description": "Data from ProspectTable",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [],
